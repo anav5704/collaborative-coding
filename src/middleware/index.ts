@@ -12,5 +12,20 @@ export const onRequest = defineMiddleware(async (context, next) => {
         }
     }
 
+    const protectedPaths = [
+        '/lessons/solo',
+        '/lessons/team',
+        '/lessons/pro',
+        '/lessons/bonus',
+    ]
+    const isProtected = protectedPaths.some(path => context.url.pathname.startsWith(path))
+
+    if (isProtected && !session?.user) {
+        return new Response(null, {
+            status: 302,
+            headers: { Location: '/403' }
+        })
+    }
+
     return next()
 })
